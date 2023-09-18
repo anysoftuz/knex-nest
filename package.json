@@ -1,9 +1,7 @@
 {
-  "name": "@mulk/db",
-  "private": true,
+  "name": "@mrrashidov/knex-nest",
   "version": "0.0.1",
   "description": "Database module for NestJS",
-  "author": "Mulk Co",
   "license": "MIT",
   "files": [
     "dist/**/*"
@@ -25,5 +23,16 @@
     "knex": "^2.5.1",
     "rxjs": "^7.8.1",
     "typescript": "^5.1.6"
+  },
+  "author": {
+    "name": "mrrashidov",
+    "email": "mrrashidov@hotmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mrrashidov/knex-nest.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/mrrashidov"
   }
 }
