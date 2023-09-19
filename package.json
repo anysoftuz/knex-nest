@@ -1,6 +1,6 @@
 {
-  "name": "@mrrashidov/knex-nest",
-  "version": "0.0.2",
+  "name": "@anysoftuz/knex-nest",
+  "version": "0.0.4",
   "description": "Database module for NestJS",
   "license": "MIT",
   "files": [
@@ -30,9 +30,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:mrrashidov/knex-nest.git"
+    "url": "git@github.com:anysoftuz/knex-nest.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/mrrashidov"
+    "registry": "https://npm.pkg.github.com/anysoftuz"
   }
 }

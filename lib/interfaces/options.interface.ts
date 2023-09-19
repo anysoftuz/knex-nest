@@ -1,9 +1,12 @@
 import { ModuleMetadata, Type } from "@nestjs/common";
-import { Knex } from "knex";
+import * as knex from "knex";
+
+export type Knex = knex.Knex;
+export type Connection = knex.Knex;
 
 export interface KnexModuleOptionsI {
   name?: string;
-  config: Knex.Config;
+  config: knex.Knex.Config;
   retryAttempts?: number;
   retryDelay?: number;
 }
