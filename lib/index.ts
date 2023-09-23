@@ -1,4 +1,4 @@
-export * from './knex.module';
+export * from './common';
 export * from './interfaces';
-export * from './knex.decorator';
-export * from './knex.pagination';
+export * from './knex.module';
+export * from './knex.magic';
