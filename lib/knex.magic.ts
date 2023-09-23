@@ -1,9 +1,8 @@
+import type {Knex} from 'knex';
 import {BaseResponse, CursorInterface, FilterParams, PageInfoInterface} from "./interfaces";
-import type {Knex} from "knex";
+
 
 export class KnexMagic {
-
-
     /**
      * @description filter data with given params and return query
      * @param query { Knex.QueryBuilder }
@@ -11,11 +10,11 @@ export class KnexMagic {
      */
     public static filter(
         query: Knex.QueryBuilder,
-        params: FilterParams
+        params: FilterParams,
     ): Knex.QueryBuilder {
-        Object.entries(params).forEach(([key, value]) => {
-            if (typeof value === 'object' && value !== null) {
-                Object.entries(value).forEach(([subKey, subValue]) => {
+        Object.entries<any>(params).forEach(([key, value]) => {
+            if (typeof value === 'object') {
+                Object.entries<any>(value).forEach(([subKey, subValue]) => {
                     if (Array.isArray(subValue)) {
                         query.whereIn(`${key}.${subKey}`, subValue);
                     } else if (typeof subValue === 'object') {
@@ -41,7 +40,7 @@ export class KnexMagic {
     }
 
     /**
-     * @description paginate data with cursor pagination method and return data with pagination meta data and total count of data
+     * @description paginate data with cursor pagination method and return data with pagination metadata and total count of data
      * @param query { Knex.QueryBuilder }
      * @param cursorParams { CursorInterface }
      * @param options { { key: string } }
@@ -51,9 +50,12 @@ export class KnexMagic {
                                         cursorParams,
                                         options,
                                     }: CursorInterface): Promise<BaseResponse<T>> {
-        const cursorColumn = options.key || "id";
-        const cursorColumnPrefix = options.keyPrefix || "id";
+        const cursorColumn = options.key || 'id';
+        const cursorColumnPrefix = options.keyPrefix || 'id';
+        const cursorId = Number(cursorParams.cursor || 0);
+        const cursorTake = Number(cursorParams.take || 10);
 
+        const cursorDirection = cursorParams.direction || 'next';
         const cursorMeta: PageInfoInterface = {
             hasNextPage: false,
             endCursor: null,
@@ -61,16 +63,15 @@ export class KnexMagic {
             startCursor: null,
         };
 
-        const whereOperator = this.getWhereOperator(cursorParams.direction);
+        const whereOperator = this.getWhereOperator(cursorDirection);
 
         if (cursorParams.cursor) {
-            query.where(cursorColumnPrefix, whereOperator, cursorParams.cursor);
+            query.where(cursorColumnPrefix, whereOperator, cursorId);
         }
+        const result: T[] = await query.limit(Number(cursorTake + 1));
 
-        const result: T[] = await query.limit(Number(cursorParams.take + 1));
-
-        if (result.length > cursorParams.take) {
-            if (cursorParams.direction === "next") {
+        if (result.length > cursorTake) {
+            if (cursorDirection === 'next') {
                 cursorMeta.hasNextPage = true;
                 if (cursorParams.cursor) {
                     cursorMeta.hasPreviousPage = true;
@@ -85,8 +86,8 @@ export class KnexMagic {
                 }
                 cursorMeta.startCursor = result[0][cursorColumn];
             }
-        } else if (result.length > 0 && result.length <= cursorParams.take) {
-            if (cursorParams.direction === "next") {
+        } else if (result.length > 0 && result.length <= cursorTake) {
+            if (cursorDirection === 'next') {
                 if (cursorParams.cursor) {
                     cursorMeta.hasPreviousPage = true;
                     cursorMeta.endCursor = result[0][cursorColumn];
@@ -111,10 +112,10 @@ export class KnexMagic {
      * @private
      */
     private static getWhereOperator(direction: string) {
-        if (direction === "next") {
-            return ">";
+        if (direction === 'next') {
+            return '>';
         } else {
-            return "<";
+            return '<';
         }
     }
 }

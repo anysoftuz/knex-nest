@@ -16,7 +16,7 @@ export interface CursorInterface {
     query: Knex.QueryBuilder;
     cursorParams: {
         take: number;
-        direction: "next" | "prev";
+        direction: 'next' | 'prev';
         cursor?: number;
     };
     options?: {
@@ -26,5 +26,13 @@ export interface CursorInterface {
 }
 
 export type FilterParams = {
-    [key: string]: any[] | { [key: string]: any } | string | number;
-}
+    [key: string]:
+        | string[]
+        | number[]
+        | {
+        min: string | number | string[] | number[];
+        max: string | number | string[] | number[];
+    }
+        | string
+        | number;
+};

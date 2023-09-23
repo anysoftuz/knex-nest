@@ -1,6 +1,6 @@
 {
   "name": "@anysoftuz/knex-nest",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Database module for NestJS",
   "license": "MIT",
   "files": [
