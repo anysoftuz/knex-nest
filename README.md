@@ -124,8 +124,8 @@ The authors of Knex.js for providing a powerful query builder.
 
 We'd like to express our gratitude to the following individuals and projects that have contributed to and inspired this library:
 
-- **Knex.js**: This library is built on top of the powerful Knex.js query builder, which simplifies database interactions and offers extensive support for various database systems. Knex.js has been instrumental in the development of KnexMagic.
+- **Knex.js**: This library is built on top of the powerful [Knex.js](https://knexjs.org/) query builder, which simplifies database interactions and offers extensive support for various database systems. Knex.js has been instrumental in the development of KnexMagic.
 
 - **Open Source Community**: We'd like to thank the entire open-source community for their valuable contributions, bug reports, and feature requests that have helped improve KnexMagic.
 
-- **Anysoft**: We are grateful to the Anysoft Organization for their support in funding and promoting this project.
+- **Anysoft**: We are grateful to the (Anysoft Organization)[https://anysoft.uz/] for their support in funding and promoting this project.
