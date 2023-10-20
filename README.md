@@ -128,4 +128,4 @@ We'd like to express our gratitude to the following individuals and projects tha
 
 - **Open Source Community**: We'd like to thank the entire open-source community for their valuable contributions, bug reports, and feature requests that have helped improve KnexMagic.
 
-- **Anysoft**: We are grateful to the (Anysoft Organization)[https://anysoft.uz/] for their support in funding and promoting this project.
+- **Anysoft**: We are grateful to the [Anysoft Organization](https://anysoft.uz/) for their support in funding and promoting this project.
