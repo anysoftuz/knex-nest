@@ -40,7 +40,7 @@ export class KnexMagic {
           );
         }
 
-        if (typeof value === "object" && key !== "search") {
+        if (typeof value === "object") {
           return Object.entries(value).reduce((query, [subKey, subValue]) => {
             if (Array.isArray(subValue)) {
               return query.whereIn(key + "." + subKey, subValue);
