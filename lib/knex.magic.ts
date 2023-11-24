@@ -94,11 +94,11 @@ export class KnexMagic {
     let totalCount: number = 0;
     if (callbackCountQuery) {
       const result = await callbackCountQuery(query);
-      totalCount = Number(result[0].count);
+      totalCount = Number(result[0].count || 0);
     } else {
       const countQuery = query.clone().clearSelect().count(`${cursorColumnPrefix} as count`);
       const result = await countQuery;
-      totalCount = Number(result[0].count);
+      totalCount = Number(result[0].count || 0);
     }
 
     const whereOperator = this.getWhereOperator(cursorDirection);
