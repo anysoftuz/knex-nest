@@ -99,6 +99,10 @@ export class KnexMagic {
       const countQuery = query
         .clone()
         .clearSelect()
+        .clearCounters()
+        .clearGroup()
+        .clearHaving()
+        .clearOrder()
         .count(`${cursorColumnPrefix} as count`);
       const result = await countQuery;
       totalCount = Number(result[0].count || 0);
@@ -109,7 +113,7 @@ export class KnexMagic {
     if (cursorParams.cursor) {
       query.where(cursorColumnPrefix, whereOperator, cursorId);
     }
-    const result: T[] = await query.limit(Number(cursorTake + 1));
+    const result: any = await query.limit(Number(cursorTake + 1));
 
     if (result.length > cursorTake) {
       if (cursorDirection === "next") {
@@ -142,7 +146,7 @@ export class KnexMagic {
     }
 
     return {
-      data: result,
+      data: result.length >= 2 ? result.pop() : result,
       pageInfo: cursorMeta,
       totalCount,
     };
