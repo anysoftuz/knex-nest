@@ -70,13 +70,13 @@ export class KnexMagic {
    * @param query { Knex.QueryBuilder }
    * @param cursorParams { CursorInterface }
    * @param options { { key: string } }
-   * @param callbackCountQuery { (result: any) => any }
+   * @param countQuery { Knex.QueryBuilder }
    */
   public static async paginate<T>({
     query,
     cursorParams,
     options,
-    callbackCountQuery,
+    countQuery,
   }: CursorInterface): Promise<BaseResponse<T>> {
     const cursorColumn = options.key || "id";
     const cursorColumnPrefix = options.keyPrefix || "id";
@@ -92,8 +92,8 @@ export class KnexMagic {
     };
 
     let totalCount: number = 0;
-    if (callbackCountQuery) {
-      const result = await callbackCountQuery(query);
+    if (countQuery) {
+      const result = await countQuery;
       totalCount = Number(result[0].count || 0);
     } else {
       const countQuery = query

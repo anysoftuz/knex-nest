@@ -82,7 +82,7 @@ export interface CursorInterface {
   /**
    * An optional callback function to modify the count query used for pagination.
    */
-  callbackCountQuery?: (query: Knex.QueryBuilder) => any;
+  countQuery?: Knex.QueryBuilder;
 }
 
 /**
