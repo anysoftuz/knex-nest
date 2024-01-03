@@ -145,8 +145,16 @@ export class KnexMagic {
       }
     }
 
+    if (result.length >= 2) {
+      if (cursorDirection === "next") {
+        result.pop();
+      } else {
+        result.shift();
+      }
+    }
+
     return {
-      data: result.length >= 2 ? result.pop() : result,
+      data: result,
       pageInfo: cursorMeta,
       totalCount,
     };
