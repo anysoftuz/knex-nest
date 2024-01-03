@@ -21,7 +21,7 @@ export class KnexMagic {
     }
 
     return Object.entries(params).reduce(
-      (query: Knex.QueryBuilder, [key, value]) => {
+      (query: Knex.QueryBuilder, [key, value]: any) => {
         if (key === "search") {
           const { columns, value: searchValue }: any = value;
 
@@ -39,23 +39,28 @@ export class KnexMagic {
             searchConditions.map(() => likeValue)
           );
         }
-
-        if (typeof value === "object") {
-          return Object.entries(value).reduce((query, [subKey, subValue]) => {
-            if (Array.isArray(subValue)) {
-              return query.whereIn(key + "." + subKey, subValue);
-            }
-            if (typeof subValue === "object") {
-              return query.whereBetween(key + "." + subKey, [
-                subValue.min,
-                subValue.max,
-              ]);
-            }
-            return query.andWhere({ [key + "." + subKey]: subValue });
-          }, query);
+        if (
+          typeof value === "object" &&
+          !Array.isArray(value) &&
+          value !== null
+        ) {
+          return Object.entries(value).reduce(
+            (query, [subKey, subValue]: any) => {
+              if (Array.isArray(subValue)) {
+                return query.whereIn(key + "." + subKey, subValue);
+              }
+              if (typeof subValue === "object") {
+                return query.whereBetween(key + "." + subKey, [
+                  subValue.min,
+                  subValue.max,
+                ]);
+              }
+              return query.andWhere({ [key + "." + subKey]: subValue });
+            },
+            query
+          );
         }
-
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value.length > 0) {
           return query.whereIn(key, value);
         }
 
@@ -145,7 +150,7 @@ export class KnexMagic {
       }
     }
 
-    if (result.length >= 2) {
+    if (result.length >= 2 && result.length !== totalCount) {
       if (cursorDirection === "next") {
         result.pop();
       } else {
