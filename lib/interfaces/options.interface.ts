@@ -13,7 +13,7 @@ export interface KnexModuleOptionsI {
 
 export interface KnexOptionsFactoryI {
   createKnexOptions(
-    connectionName?: string,
+    connectionName?: string
   ): Promise<KnexModuleOptionsI> | KnexModuleOptionsI;
 }
 
