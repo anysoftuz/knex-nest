@@ -150,7 +150,7 @@ export class KnexMagic {
       }
     }
 
-    if (result.length > totalCount) {
+    if (result.length > cursorTake) {
       if (cursorDirection === "next") {
         result.pop();
       } else {
