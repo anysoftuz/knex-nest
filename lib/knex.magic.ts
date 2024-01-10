@@ -83,19 +83,17 @@ export class KnexMagic {
     options,
     countQuery,
   }: CursorInterface): Promise<BaseResponse<T>> {
-    const cursorColumn = options.key || "id";
-    const cursorColumnPrefix = options.keyPrefix || "id";
-    const cursorId = Number(cursorParams.cursor || 0);
-    const cursorTake = Number(cursorParams.take || 10);
-
-    const cursorDirection = cursorParams.direction || "next";
+    const cursorColumn: string = options.key || "id";
+    const cursorColumnPrefix: string = options.keyPrefix || "id";
+    const cursorId: number = Number(cursorParams.cursor || 0);
+    const cursorTake: number = Number(cursorParams.take || 10);
+    const cursorDirection: "next" | "prev" = cursorParams.direction || "next";
     const cursorMeta: PageInfoInterface = {
       hasNextPage: false,
       endCursor: null,
       hasPreviousPage: false,
       startCursor: null,
     };
-
     let totalCount: number = 0;
     if (countQuery) {
       const result = await countQuery;
@@ -112,52 +110,58 @@ export class KnexMagic {
       const result = await countQuery;
       totalCount = Number(result[0].count || 0);
     }
-
     const whereOperator = this.getWhereOperator(cursorDirection);
-
     if (cursorParams.cursor) {
-      query.where(cursorColumnPrefix, whereOperator, cursorId);
+      query
+        .where(cursorColumnPrefix, whereOperator.action, cursorId)
+        .orderBy(cursorColumnPrefix, whereOperator.orderBy);
     }
-    const result: any = await query.limit(Number(cursorTake + 1));
-
+    const result = await query.limit(Number(cursorTake + 1));
     if (result.length > cursorTake) {
+      result.pop();
       if (cursorDirection === "next") {
-        cursorMeta.hasNextPage = true;
-        if (cursorParams.cursor) {
-          cursorMeta.hasPreviousPage = true;
-          cursorMeta.startCursor = result[0][cursorColumn];
-        }
         cursorMeta.endCursor = result[result.length - 1][cursorColumn];
-      } else {
-        cursorMeta.hasPreviousPage = true;
-        if (cursorParams.cursor) {
-          cursorMeta.hasNextPage = true;
-          cursorMeta.endCursor = result[result.length - 1][cursorColumn];
-        }
-        cursorMeta.startCursor = result[0][cursorColumn];
-      }
-    } else if (result.length > 0 && result.length <= cursorTake) {
-      if (cursorDirection === "next") {
-        if (cursorParams.cursor) {
+        cursorMeta.hasNextPage = true;
+        if (cursorId != 0) {
+          cursorMeta.startCursor = result[0][cursorColumn];
           cursorMeta.hasPreviousPage = true;
-          cursorMeta.endCursor = result[0][cursorColumn];
+        } else {
+          cursorMeta.startCursor = null;
+          cursorMeta.hasPreviousPage = false;
         }
       } else {
-        if (cursorParams.cursor) {
+        cursorMeta.endCursor = result[0][cursorColumn];
+        cursorMeta.startCursor = result[result.length - 1][cursorColumn];
+        cursorMeta.hasPreviousPage = true;
+        if (cursorId === 0) {
+          cursorMeta.hasNextPage = false;
+        } else {
           cursorMeta.hasNextPage = true;
-          cursorMeta.startCursor = result[result.length - 1][cursorColumn];
         }
       }
-    }
-
-    if (result.length > cursorTake) {
+    } else if (result.length != 0) {
       if (cursorDirection === "next") {
-        result.pop();
+        cursorMeta.startCursor = result[0][cursorColumn];
+        if (cursorId === 0) {
+          cursorMeta.hasPreviousPage = false;
+        } else {
+          cursorMeta.hasPreviousPage = true;
+        }
+        cursorMeta.endCursor = null;
+
+        cursorMeta.hasNextPage = false;
       } else {
-        result.shift();
+        cursorMeta.endCursor = result[0][cursorColumn];
+        if (cursorId != 0) {
+          cursorMeta.hasNextPage = true;
+        } else {
+          cursorMeta.hasNextPage = false;
+        }
+        cursorMeta.startCursor = null;
+
+        cursorMeta.hasPreviousPage = false;
       }
     }
-
     return {
       data: result,
       pageInfo: cursorMeta,
@@ -167,14 +171,18 @@ export class KnexMagic {
 
   /**
    * @description get where operator for cursor pagination
-   * @param direction
+   * @param direction { "next" | "prev" }
    * @private
+   * @returns { { action: string, orderBy: string } }
    */
-  private static getWhereOperator(direction: string) {
+  public static getWhereOperator(direction: "next" | "prev"): {
+    action: string;
+    orderBy: string;
+  } {
     if (direction === "next") {
-      return ">";
+      return { action: ">", orderBy: "asc" };
     } else {
-      return "<";
+      return { action: "<", orderBy: "desc" };
     }
   }
 }
