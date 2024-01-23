@@ -50,10 +50,27 @@ export class KnexMagic {
                 return query.whereIn(key + "." + subKey, subValue);
               }
               if (typeof subValue === "object") {
-                return query.whereBetween(key + "." + subKey, [
-                  subValue.min,
-                  subValue.max,
-                ]);
+                if (subValue.min && subValue.max) {
+                  return query.whereBetween(key + "." + subKey, [
+                    subValue.min,
+                    subValue.max,
+                  ]);
+                } else {
+                  if (subValue.min) {
+                    return query.andWhere(
+                      key + "." + subKey,
+                      ">=",
+                      subValue.min
+                    );
+                  }
+                  if (subValue.max) {
+                    return query.andWhere(
+                      key + "." + subKey,
+                      "<=",
+                      subValue.max
+                    );
+                  }
+                }
               }
               return query.andWhere({ [key + "." + subKey]: subValue });
             },
@@ -106,7 +123,7 @@ export class KnexMagic {
         .clearGroup()
         .clearHaving()
         .clearOrder()
-        .count(`${cursorColumnPrefix} as count`);
+        .countDistinct(`${cursorColumnPrefix} as count`);
       const result = await countQuery;
       totalCount = Number(result[0].count || 0);
     }
@@ -115,6 +132,8 @@ export class KnexMagic {
       query
         .where(cursorColumnPrefix, whereOperator.action, cursorId)
         .orderBy(cursorColumnPrefix, whereOperator.orderBy);
+    } else {
+      query.orderBy(cursorColumnPrefix, whereOperator.orderBy || "asc");
     }
     const result = await query.limit(Number(cursorTake + 1));
     if (result.length > cursorTake) {

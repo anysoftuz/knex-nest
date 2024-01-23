@@ -1,6 +1,6 @@
 {
   "name": "@anysoftuz/knex-nest",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Database module for NestJS",
   "license": "MIT",
   "files": [
@@ -10,7 +10,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "pub": "pnpm build && npm publish"
+    "pub": "npm run build && npm publish"
   },
   "peerDependencies": {
     "@nestjs/common": ">=10.2.3",
@@ -35,5 +35,6 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/anysoftuz"
-  }
+  },
+  "packageManager": "npm@10.3.0"
 }
